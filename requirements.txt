@@ -1,0 +1,35 @@
+# ---- Core data / numerics -------------------------------------------------
+numpy>=1.26,<2.2
+pandas>=2.1,<2.3
+pyarrow>=15.0
+scipy>=1.11
+
+# ---- Churn model + evaluation --------------------------------------------
+scikit-learn>=1.4,<1.6
+xgboost>=2.0,<2.2
+shap>=0.44
+matplotlib>=3.8
+
+# ---- Causal inference -----------------------------------------------------
+# DoWhy pulls in networkx, sympy, statsmodels. Kept in the core set so the
+# causal notebook runs in the same environment.
+dowhy>=0.11
+statsmodels>=0.14
+
+# ---- API service ----------------------------------------------------------
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.6
+pydantic-settings>=2.2
+
+# ---- LLM providers (optional at runtime; pipeline runs in mock mode w/o keys)
+anthropic>=0.40
+openai>=1.30
+
+# ---- LLMOps tracing -------------------------------------------------------
+langfuse>=2.50,<3.0
+
+# ---- Utilities ------------------------------------------------------------
+python-dotenv>=1.0
+tenacity>=8.2
+rich>=13.7

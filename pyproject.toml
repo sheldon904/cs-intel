@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cs-intel"
+version = "0.1.0"
+description = "Customer-success intelligence pipeline: churn ML, LLM intent/sentiment, causal inference, and a next-best-action agent with an approval gate."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "cs-intel" }]
+
+[tool.setuptools]
+packages = ["common", "datagen", "churn", "intents", "causal", "agent", "api"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["*.ipynb"]  # notebooks legitimately import after setup/markdown
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+# E501: line length handled by formatter.
+# UP042: str+Enum is intentional (JSON-serializable enums, explicit .value access).
+ignore = ["E501", "UP042"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+warn_redundant_casts = true
+no_implicit_optional = true
+ignore_missing_imports = true       # third-party libs ship partial/absent stubs
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["datagen.*", "churn.*", "intents.*", "agent.*", "common.*", "api.*"]
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::FutureWarning",
+]

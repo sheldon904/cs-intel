@@ -1,0 +1,48 @@
+# cs-intel — one command brings up the whole stack:
+#   docker compose up --build
+# then open http://localhost:5173
+#
+# Runs fully offline (mock LLM) by default. To exercise real LLM + Langfuse
+# tracing, put keys in a .env file next to this compose file (see .env.example).
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      CS_INTEL_LLM_PROVIDER: ${CS_INTEL_LLM_PROVIDER:-mock}
+      CS_INTEL_SEED: ${CS_INTEL_SEED:-42}
+      CS_INTEL_N_ACCOUNTS: ${CS_INTEL_N_ACCOUNTS:-500}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:-}
+      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY:-}
+      LANGFUSE_HOST: ${LANGFUSE_HOST:-https://cloud.langfuse.com}
+    volumes:
+      - cs_data:/app/data
+      - cs_artifacts:/app/artifacts
+      - cs_memory:/app/agent/memory_store
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0) if urllib.request.urlopen('http://localhost:8000/api/health').status==200 else sys.exit(1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 90s
+
+  ui:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  cs_data:
+  cs_artifacts:
+  cs_memory:
