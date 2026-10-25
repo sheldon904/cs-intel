@@ -10,4 +10,4 @@ pandas-stubs
 
 # ---- Notebooks (causal layer) ---------------------------------------------
 jupyter>=1.0
-nbconvert>=7.0
+nbconvert>=7.17.2
